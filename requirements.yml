@@ -5,4 +5,4 @@ roles:
 
 collections:
   # Install a collections from Ansible Galaxy.
-  - name: 
+  - name: community.docker
