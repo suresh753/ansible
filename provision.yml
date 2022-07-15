@@ -4,6 +4,8 @@
   vars:
     pip_install_packages:
       - name: docker
+    docker_users: 
+      - bob
   roles:
     - geerlingguy.pip
     - docker
