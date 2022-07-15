@@ -22,3 +22,8 @@ docker_users: []
 
 # Docker daemon options as a dict
 docker_daemon_options: {}
+
+# Docker container defailts
+default_container_name: docker
+default_container_image: ubuntu:20.04
+default_container_command: sleep 1
