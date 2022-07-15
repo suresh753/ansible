@@ -32,7 +32,7 @@
     state: "{{ docker_package_state }}"
     update_cache: true
 
-- name: install docker engine
+- name: Install Docker.
   apt:
     pkg:
       - "docker-ce{% if docker_default_version %}={{ docker_default_version }}{% endif %}"

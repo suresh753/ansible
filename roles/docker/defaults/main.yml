@@ -1,8 +1,7 @@
 
 # Docker package
 # We can able to overide these docker_default_version inside of playbook.
-docker_edition: 'ce'
-docker_package: "docker-{{ docker_edition }}"
+docker_default_version: ''
 docker_package_state: present
 
 # Service options.
