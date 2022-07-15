@@ -1,0 +1,80 @@
+---
+# docker setup reference from https://docs.docker.com/engine/install/ubuntu/
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: "{{ docker_apt_gpg_key }}"
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: "{{ docker_package_state }}"
+  ignore_errors: "{{ docker_apt_ignore_key_error }}"
+
+- name: Add docker stable registry
+  apt_repository:
+    repo: "{{ docker_apt_repository }}"
+    state: "{{ docker_package_state }}"
+    update_cache: true
+
+- name: install docker engine
+  apt:
+    pkg:
+      - "docker-ce{% if docker_default_version %}={{ docker_default_version }}{% endif %}"
+      - "docker-ce-cli{% if docker_default_version %}={{ docker_default_version }}{% endif %}"
+      - containerd.io
+      - docker-compose-plugin
+    state: "{{ docker_package_state }}"
+  notify: restart docker
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Ensure /etc/docker/ directory exists.
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
+  when: docker_daemon_options.keys() | length > 0
+
+- name: Configure Docker daemon options.
+  copy:
+    content: "{{ docker_daemon_options | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    mode: 0644
+  when: docker_daemon_options.keys() | length > 0
+  notify: restart docker
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+# By defualt handlers are invoked after all the tasks complete in a particular play.
+- name: Ensure handlers are notified now.
+  meta: flush_handlers
+
+- name: Ensure docker users are added to the docker group.
+  user:
+    name: "{{ user }}"
+    append: true
+    groups: docker
+  with_items: "{{ docker_users }}"
+
+- name: Reset ssh connection to allow user changes to affect 'current login user'
+  meta: reset_connection
