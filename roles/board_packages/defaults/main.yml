@@ -1,3 +1,4 @@
 ---
 gitlab_runner_package_name: 'gitlab-runner'
 gitlab_runner_package_version: '14.7.0'
+gitlab_runner_timeout_stop_seconds: '7200'
