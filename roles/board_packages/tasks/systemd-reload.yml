@@ -27,7 +27,7 @@
       [Service]
       TimeoutStopSec={{ gitlab_runner_timeout_stop_seconds }}
       KillSignal=SIGQUIT
-  when: gitlab_runner_timeout_stop_seconds > 0
+  when: gitlab_runner_timeout_stop_seconds > "0"
   register: gitlab_runner_kill_timeout
 
 - name: Force systemd to reread configs # noqa 503
