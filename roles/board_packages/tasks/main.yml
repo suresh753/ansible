@@ -25,9 +25,10 @@
       "git-lfs",
       "python3-venv",
       "wget",
-      "python-docker",
       "python3-docker"
     ]
+
+- include_tasks: install-gitlab-runner.yml
 
 - name: Download get-pip.py file
   get_url:
