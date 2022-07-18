@@ -1,8 +1,12 @@
 # Steps
 
-## Install ansible galaxy roles and collections
+## Install ansible galaxy roles
 
-```ansible-galaxy install -r requirements.yml```
+```ansible-galaxy role install -r requirements.yml```
+
+## Install ansible galaxy colletions
+
+```ansible-galaxy collection install -r requirements.yml```
 
 ### Run playbook
 
