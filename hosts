@@ -3,5 +3,3 @@
 node02 ansible_host=node02
 node03 ansible_host=node03
 
-[all:vars]
-anisble_python_interpreter=/usr/bin/python3
