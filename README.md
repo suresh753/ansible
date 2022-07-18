@@ -9,13 +9,10 @@ sudo add-apt-repository --yes --update ppa:ansible/ansible
 sudo apt install ansible=5.10.0-1ppa~focal
 ```
 
-## Install ansible galaxy roles
+## Install ansible roles and collections from galaxy
 
-```ansible-galaxy role install -r requirements.yml```
+```ansible-galaxy install -r requirements.yml```
 
-## Install ansible galaxy colletions
-
-```ansible-galaxy collection install -r requirements.yml```
 
 ### Run playbook
 
