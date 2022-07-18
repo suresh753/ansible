@@ -1,0 +1,47 @@
+---
+- name: Install aptitude using apt
+  apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+- name: Install Java.
+  include_role:
+    name: geerlingguy.java
+  vars:
+    java_packages:
+      - openjdk-11-jdk
+    java_home: "/usr/lib/jvm/java-11-openjdk-amd64"
+
+- name: Install required system packages
+  apt: name={{ item }} state=present
+  loop:
+    [
+      "libprotobuf-dev",
+      "cmake",
+      "ninja-build",
+      "software-properties-common",
+      "python",
+      "python3",
+      "python3-pip",
+      "git",
+      "git-lfs",
+      "python3-venv",
+      "wget",
+      "python-docker",
+      "python3-docker"
+    ]
+
+- name: Download get-pip.py file
+  get_url:
+    url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+    dest: /tmp/get-pip.py
+    mode: "0440"
+
+- name: Install python2 pip
+  command: python2 /tmp/get-pip.py
+
+- name: Install required python packages
+  pip:
+    name: junitparser, pipenv
+    umask: "0022"
+    executable: pip3
+  become: True
+

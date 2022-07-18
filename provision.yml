@@ -7,5 +7,6 @@
     docker_users: 
       - bob
   roles:
+    - board_packages
     - geerlingguy.pip
     - docker
