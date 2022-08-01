@@ -1,0 +1,47 @@
+- name: Remove useless packages from the cache
+  ansible.builtin.apt:
+    autoclean: "yes"
+    force_apt_get: "yes"
+- name: Remove dependencies that are no longer required
+  ansible.builtin.apt:
+    autoremove: "yes"
+    force_apt_get: "yes"
+- name: Update repositories cache and install kernel packages
+  ansible.builtin.apt:
+    pkg:
+      - "linux-image-{{ kernel_version }}-generic"
+      - "linux-headers-{{ kernel_version }}-generic"
+      - "linux-modules-extra-{{ kernel_version }}-generic"
+      - >-
+        linux-hwe-{{ kernel_version.split('.')[:2] | join('.') }}-headers-{{
+        kernel_version }}
+      - "linux-modules-{{ kernel_version }}-generic"
+    update_cache: "yes"
+    install_recommends: "yes"
+    force_apt_get: "yes"
+- name: "Ensure grub default set to {{ kernel_version }}"
+  ansible.builtin.lineinfile:
+    path: /etc/default/grub
+    regexp: ^GRUB_DEFAULT=.*
+    line: >-
+      GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux {{
+      kernel_version }}-generic"
+    backrefs: "yes"
+    backup: "yes"
+- name: Update grub config
+  ansible.builtin.shell: update-grub
+- name: >-
+    Reboot if kernel changed (from {{ ansible_kernel }} to {{ kernel_version
+    }}).
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  register: linux_kernel_rebooted
+  when:
+    - reboot_on_kernel_update | bool
+- name: Update facts
+  ansible.builtin.setup: null
+  when: linux_kernel_rebooted.changed
+- name: Show kernel version after reboot
+  ansible.builtin.debug:
+    msg: "The current kernel version is now: {{ ansible_kernel }}."
+  when: linux_kernel_rebooted.changed

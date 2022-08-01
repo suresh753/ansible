@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  become: yes
+  vars: 
+    kernel_version: 5.13.0-41
+    reboot_on_kernel_update: true
+  tasks:
+    - name: Include task list in play only if server is ubuntu 20.04
+      ansible.builtin.include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_version }}.yaml"
+      when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "20.04" and ansible_kernel != kernel_version
